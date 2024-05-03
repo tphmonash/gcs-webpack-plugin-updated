@@ -1,5 +1,5 @@
 import Promise from "bluebird";
-import PropTypes from "prop-types";
+import Joi from "joi";
 import merge from "lodash.merge";
 import { Storage } from "@google-cloud/storage";
 import path from "path";
@@ -11,8 +11,7 @@ const pluginName = "WebpackGoogleCloudStoragePlugin";
 
 class WebpackGoogleCloudStoragePlugin {
   constructor(options = {}) {
-    PropTypes.validateWithErrors(this.constructor.schema, options, pluginName);
-
+    WebpackGoogleCloudStoragePlugin.validateOptions(options);
     this.isConnected = false;
     this.storageOptions = options.storageOptions;
     this.uploadOptions = options.uploadOptions;
@@ -35,6 +34,31 @@ class WebpackGoogleCloudStoragePlugin {
     this.options.include = (this.options.include || []).map(
       (pattern) => new RegExp(pattern)
     );
+  }
+
+  static validateOptions(options) {
+    const optionsSchema = Joi.object({
+      directory: Joi.string(),
+      include: Joi.array().items(Joi.string()),
+      exclude: Joi.array().items(Joi.string()),
+      storageOptions: Joi.object().required(),
+      uploadOptions: Joi.object({
+        bucketName: Joi.string().required(),
+        forceCreateBucket: Joi.boolean(),
+        gzip: Joi.boolean(),
+        public: Joi.boolean(),
+        destinationNameFn: Joi.function(),
+        metadataFn: Joi.function(),
+        makePublic: Joi.boolean(),
+        resumable: Joi.boolean(),
+        concurrency: Joi.number(),
+      }),
+    });
+
+    const { error } = optionsSchema.validate(options);
+    if (error) {
+      throw new Error(`Configuration validation error: ${error.message}`);
+    }
   }
 
   async connect() {

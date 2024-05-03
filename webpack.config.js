@@ -50,17 +50,12 @@ module.exports = {
           },
         },
       },
-      {
-        test: /\.json$/,
-        type: "javascript/auto", // Correct handling of JSON in Webpack 4
-        use: "json-loader",
-      },
     ],
   },
   externals: [
     nodeExternals({
       // 'whitelist' is renamed to 'allowlist'
-      allowlist: [/^lodash/, "@google-cloud", "prop-types"],
+      allowlist: [/^lodash/, "@google-cloud", "joi"],
     }),
   ],
 };
