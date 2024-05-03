@@ -58,8 +58,8 @@
   "dependencies": {
     "@google-cloud/storage": "^7.10.2",
     "bluebird": "^3.7.2",
+    "joi": "^17.13.1",
     "lodash.merge": "^4.6.2",
-    "prop-types": "^15.7.2",
     "recursive-readdir": "^2.2.2"
   }
 }
