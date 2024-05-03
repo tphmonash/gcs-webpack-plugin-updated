@@ -1,19 +1,26 @@
 {
-  "extends": "airbnb",
+  "extends": [
+    "airbnb",
+    "prettier"
+  ],
   "parserOptions": {
-    "ecmaVersion": 6,
+    "ecmaVersion": 2020,  // Updated ECMAScript version for modern syntax
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
     }
   },
-  "indent": ["error", 2],
+  "env": {
+    "browser": false,
+    "es2020": true,
+    "node": true  // Ensuring that ESLint recognizes Node.js global variables and Node.js scoping.
+  },
   "plugins": [
-    "react",
     "jsx-a11y",
     "import"
   ],
   "rules": {
+    "indent": ["error", 2],  // Correct placement to ensure it's recognized
     "import/no-extraneous-dependencies": [
       "warn",
       {
@@ -21,6 +28,8 @@
         "optionalDependencies": true,
         "peerDependencies": false
       }
-    ]
+    ],
+    "no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }],
+    "no-console": "off"  // Depending on your team's policy on console statements
   }
 }

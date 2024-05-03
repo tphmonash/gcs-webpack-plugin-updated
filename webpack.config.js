@@ -1,66 +1,66 @@
-const webpack = require('webpack');
-const path = require('path');
-const nodeExternals = require('webpack-node-externals');
+const webpack = require("webpack");
+const path = require("path");
+const nodeExternals = require("webpack-node-externals");
 
-const nodeEnv = process.env.NODE_ENV === 'production' ? 'production' : 'development';
+const nodeEnv =
+  process.env.NODE_ENV === "production" ? "production" : "development";
 
 module.exports = {
   // the project dir
   context: __dirname,
-  entry: './src/index.js',
-  target: 'node',
-  debug: true,
+  entry: "./src/index.js",
+  target: "node",
+  mode: nodeEnv, // 'production' or 'development'
 
   resolve: {
-    extensions: ['', '.js'],
+    extensions: [".js"], // removed the empty string ''
   },
 
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    library: 'webpack-google-cloud-storage-plugin',
-    libraryTarget: 'umd',
-    filename: 'webpack-google-cloud-storage-plugin.js',
+    path: path.resolve(__dirname, "dist"),
+    library: "webpack-google-cloud-storage-plugin",
+    libraryTarget: "umd",
+    filename: "webpack-google-cloud-storage-plugin.js",
   },
 
   plugins: [
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(nodeEnv),
-      },
+      "process.env.NODE_ENV": JSON.stringify(nodeEnv),
     }),
   ],
 
   module: {
-    preLoaders: [
+    rules: [
+      // 'rules' replaces both 'loaders' and 'preLoaders'
       {
-        test: /\.js?$/,
-        loader: 'eslint',
+        enforce: "pre", // 'pre' loader for linting
+        test: /\.js$/,
+        loader: "eslint-loader",
         include: /src/,
         exclude: /node_modules/,
       },
-    ],
-
-    loaders: [
       {
         test: /\.js$/,
         include: /src/,
-        exclude: /(node_modules|bower_components)/,
-        loader: 'babel',
-        query: {
-          presets: ['es2015'],
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"], // Updated to Babel 7
+          },
         },
       },
       {
         test: /\.json$/,
-        loader: 'json-loader',
+        type: "javascript/auto", // Correct handling of JSON in Webpack 4
+        use: "json-loader",
       },
     ],
   },
   externals: [
-    nodeExternals(
-      {
-        whitelist: [/^lodash/, '@google-cloud', 'prop-types'],
-      }
-    ),
+    nodeExternals({
+      // 'whitelist' is renamed to 'allowlist'
+      allowlist: [/^lodash/, "@google-cloud", "prop-types"],
+    }),
   ],
 };
